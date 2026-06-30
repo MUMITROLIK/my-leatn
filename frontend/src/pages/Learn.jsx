@@ -1,4 +1,5 @@
 import React from "react";
+import { motion } from "framer-motion";
 import { useGame } from "../context/GameContext";
 import { TRACKS, getCourse, getAllLessonsFlat } from "../data/courses";
 import { SkillPath } from "../components/SkillPath";
@@ -32,18 +33,22 @@ export default function Learn() {
             const Icon = iconMap[t.icon];
             const active = activeTrack === t.id;
             return (
-              <button
+              <motion.button
                 key={t.id}
                 data-testid={`track-tab-${t.id}`}
                 onClick={() => setActiveTrack(t.id)}
-                className={`tactile shrink-0 flex items-center gap-2 px-4 py-2.5 rounded-2xl font-display font-semibold border-2 ${
+                whileHover={{ scale: 1.04 }}
+                whileTap={{ scale: 0.94, y: 3 }}
+                animate={active ? { y: [0, -3, 0] } : {}}
+                transition={{ duration: 0.3 }}
+                className={`shrink-0 flex items-center gap-2 px-4 py-2.5 rounded-2xl font-display font-semibold border-2 ${
                   active ? "text-white border-b-4" : "bg-white text-slate-600 border-slate-200 border-b-4"
                 }`}
                 style={active ? { backgroundColor: t.color, borderColor: t.colorDark } : {}}
               >
                 <Icon className="w-5 h-5" />
                 {t.name}
-              </button>
+              </motion.button>
             );
           })}
         </div>
@@ -56,8 +61,16 @@ export default function Learn() {
         </div>
 
         {/* Side cards */}
-        <div className="order-1 md:order-2 space-y-4 md:sticky md:top-24 self-start">
-          <div className="bg-white rounded-2xl border-2 border-slate-200 border-b-4 p-5">
+        <motion.div
+          className="order-1 md:order-2 space-y-4 md:sticky md:top-24 self-start"
+          initial="hidden"
+          animate="show"
+          variants={{ show: { transition: { staggerChildren: 0.12 } } }}
+        >
+          <motion.div
+            variants={{ hidden: { opacity: 0, y: 20 }, show: { opacity: 1, y: 0 } }}
+            className="bg-white rounded-2xl border-2 border-slate-200 border-b-4 p-5"
+          >
             <div className="flex items-center justify-between mb-3">
               <h3 className="font-display font-bold text-lg text-slate-800">Прогресс курса</h3>
               <Trophy className="w-5 h-5 text-[#FFC800]" />
@@ -66,9 +79,12 @@ export default function Learn() {
             <p className="text-sm font-bold text-slate-500">
               {completedCount} / {flat.length} уроков · {trackProgress}%
             </p>
-          </div>
+          </motion.div>
 
-          <div className="bg-white rounded-2xl border-2 border-slate-200 border-b-4 p-5">
+          <motion.div
+            variants={{ hidden: { opacity: 0, y: 20 }, show: { opacity: 1, y: 0 } }}
+            className="bg-white rounded-2xl border-2 border-slate-200 border-b-4 p-5"
+          >
             <div className="flex items-center justify-between mb-3">
               <h3 className="font-display font-bold text-lg text-slate-800">Цель на день</h3>
               <Target className="w-5 h-5 text-[#1CB0F6]" />
@@ -77,19 +93,27 @@ export default function Learn() {
             <p className="text-sm font-bold text-slate-500">
               {xpToday} / {dailyGoal} XP сегодня
             </p>
-          </div>
+          </motion.div>
 
-          <div className="bg-gradient-to-br from-amber-400 to-orange-500 rounded-2xl border-b-4 border-orange-600 p-5 text-white">
+          <motion.div
+            variants={{ hidden: { opacity: 0, y: 20 }, show: { opacity: 1, y: 0 } }}
+            className="bg-gradient-to-br from-amber-400 to-orange-500 rounded-2xl border-b-4 border-orange-600 p-5 text-white"
+          >
             <div className="flex items-center gap-2 mb-1">
-              <Flame className="w-6 h-6 fill-white" />
+              <motion.span
+                animate={{ rotate: [-8, 8, -8] }}
+                transition={{ duration: 1.6, repeat: Infinity, ease: "easeInOut" }}
+              >
+                <Flame className="w-6 h-6 fill-white" />
+              </motion.span>
               <span className="font-display font-bold text-2xl">{streak}</span>
             </div>
             <p className="font-bold text-sm opacity-90">Серия дней подряд</p>
             <div className="mt-3 pt-3 border-t border-white/30 text-sm font-bold">
               Уровень {level} · {xpIntoLevel}/100 XP
             </div>
-          </div>
-        </div>
+          </motion.div>
+        </motion.div>
       </div>
     </div>
   );

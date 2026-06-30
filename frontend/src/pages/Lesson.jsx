@@ -1,4 +1,5 @@
 import React, { useMemo, useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import { useNavigate, useParams } from "react-router-dom";
 import { useGame } from "../context/GameContext";
 import { findLesson, TRACKS } from "../data/courses";
@@ -170,42 +171,65 @@ export default function Lesson() {
       </div>
 
       {/* Content */}
-      <div className="flex-1 max-w-3xl mx-auto w-full px-4 sm:px-6 py-6">
-        {isTheory && <TheoryCard card={current} track={track} />}
-        {lesson.type === "choice" && (
-          <ChoiceQuestion question={current} value={value} onChange={setValue} phase={phase} />
-        )}
-        {lesson.type === "fill" && (
-          <FillBlank question={current} value={value} onChange={setValue} phase={phase} />
-        )}
-        {lesson.type === "code" && (
-          <CodeArrange question={current} value={value} onChange={setValue} phase={phase} />
-        )}
+      <div className="flex-1 max-w-3xl mx-auto w-full px-4 sm:px-6 py-6 overflow-hidden">
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={`${lesson.id}-${step}`}
+            initial={{ opacity: 0, x: 40 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: -40 }}
+            transition={{ type: "spring", stiffness: 300, damping: 28 }}
+          >
+            {isTheory && <TheoryCard card={current} track={track} />}
+            {lesson.type === "choice" && (
+              <ChoiceQuestion question={current} value={value} onChange={setValue} phase={phase} />
+            )}
+            {lesson.type === "fill" && (
+              <FillBlank question={current} value={value} onChange={setValue} phase={phase} />
+            )}
+            {lesson.type === "code" && (
+              <CodeArrange question={current} value={value} onChange={setValue} phase={phase} />
+            )}
+          </motion.div>
+        </AnimatePresence>
       </div>
 
       {/* Bottom action bar */}
-      <div
+      <motion.div
+        animate={{
+          backgroundColor:
+            phase === "correct" ? "#D7FFB8" : phase === "wrong" ? "#FFDFE0" : "#ffffff",
+        }}
+        transition={{ duration: 0.2 }}
         className={`sticky bottom-0 border-t-2 z-30 ${
           phase === "correct"
-            ? "bg-[#D7FFB8] border-[#58CC02]"
+            ? "border-[#58CC02]"
             : phase === "wrong"
-            ? "bg-[#FFDFE0] border-[#FF4B4B]"
-            : "bg-white border-slate-200"
+            ? "border-[#FF4B4B]"
+            : "border-slate-200"
         }`}
       >
         <div className="max-w-3xl mx-auto w-full px-4 sm:px-6 py-4 flex items-center justify-between gap-4">
-          <div className="font-display font-bold">
-            {phase === "correct" && (
-              <span className="flex items-center gap-2 text-[#58A700]">
-                <Check className="w-6 h-6" strokeWidth={3} /> Верно!
-              </span>
-            )}
-            {phase === "wrong" && (
-              <span className="flex items-center gap-2 text-[#EA2B2B]">
-                <X className="w-6 h-6" strokeWidth={3} /> Ошибка, попробуй ещё!
-              </span>
-            )}
-          </div>
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={phase}
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -10 }}
+              className="font-display font-bold"
+            >
+              {phase === "correct" && (
+                <span className="flex items-center gap-2 text-[#58A700]">
+                  <Check className="w-6 h-6" strokeWidth={3} /> Верно!
+                </span>
+              )}
+              {phase === "wrong" && (
+                <span className="flex items-center gap-2 text-[#EA2B2B]">
+                  <X className="w-6 h-6" strokeWidth={3} /> Ошибка, попробуй ещё!
+                </span>
+              )}
+            </motion.div>
+          </AnimatePresence>
 
           {isTheory ? (
             <button
@@ -238,7 +262,7 @@ export default function Lesson() {
             </button>
           )}
         </div>
-      </div>
+      </motion.div>
     </div>
   );
 }

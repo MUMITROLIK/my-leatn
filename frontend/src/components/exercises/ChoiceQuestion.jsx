@@ -1,4 +1,5 @@
 import React from "react";
+import { motion } from "framer-motion";
 import { Check, X } from "lucide-react";
 
 export const ChoiceQuestion = ({ question, value, onChange, phase }) => {
@@ -22,14 +23,17 @@ export const ChoiceQuestion = ({ question, value, onChange, phase }) => {
             cls = "border-[#1CB0F6] bg-[#DDF4FF] text-[#1899D6]";
           }
           return (
-            <button
+            <motion.button
               key={i}
               data-testid={`answer-choice-${i}`}
               disabled={revealed}
               onClick={() => onChange(i)}
-              className={`tactile text-left p-4 border-2 border-b-4 rounded-2xl flex items-center gap-4 text-lg font-bold ${cls} ${
-                selected && !revealed ? "pop" : ""
-              }`}
+              initial={{ opacity: 0, x: 30 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: i * 0.06, type: "spring", stiffness: 300, damping: 24 }}
+              whileHover={!revealed ? { scale: 1.02 } : {}}
+              whileTap={!revealed ? { scale: 0.97 } : {}}
+              className={`text-left p-4 border-2 border-b-4 rounded-2xl flex items-center gap-4 text-lg font-bold ${cls}`}
             >
               <span
                 className={`shrink-0 w-7 h-7 rounded-lg border-2 flex items-center justify-center text-sm font-bold ${
@@ -51,7 +55,7 @@ export const ChoiceQuestion = ({ question, value, onChange, phase }) => {
                 )}
               </span>
               <span className="font-mono">{opt}</span>
-            </button>
+            </motion.button>
           );
         })}
       </div>

@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { motion } from "framer-motion";
 import { Gem, Zap, Target, Flame } from "lucide-react";
 
 const colors = ["#58CC02", "#1CB0F6", "#FF9600", "#FFC800", "#FF4B4B", "#CE82FF"];
@@ -44,9 +45,16 @@ export const Celebration = ({ xp, gems, accuracy, streak, onContinue }) => {
         <p className="text-amber-800 font-bold text-lg mb-8">Отличная работа 🎉</p>
 
         <div className="grid grid-cols-3 gap-3 w-full max-w-md mx-auto mb-10">
-          <Stat icon={Zap} label="Опыт" value={`+${xp}`} color="#FFC800" />
-          <Stat icon={Target} label="Точность" value={`${accuracy}%`} color="#1CB0F6" />
-          <Stat icon={Gem} label="Гемы" value={`+${gems}`} color="#58CC02" />
+          <motion.div
+            className="contents"
+            initial="hidden"
+            animate="show"
+            variants={{ show: { transition: { staggerChildren: 0.15, delayChildren: 0.3 } } }}
+          >
+            <Stat icon={Zap} label="Опыт" value={`+${xp}`} color="#FFC800" />
+            <Stat icon={Target} label="Точность" value={`${accuracy}%`} color="#1CB0F6" />
+            <Stat icon={Gem} label="Гемы" value={`+${gems}`} color="#58CC02" />
+          </motion.div>
         </div>
 
         <div className="flex items-center justify-center gap-2 mb-8 text-amber-700 font-bold">
@@ -68,9 +76,12 @@ export const Celebration = ({ xp, gems, accuracy, streak, onContinue }) => {
 };
 
 const Stat = ({ icon: Icon, label, value, color }) => (
-  <div className="bg-white rounded-2xl p-4 flex flex-col items-center gap-1 shadow-md">
+  <motion.div
+    variants={{ hidden: { opacity: 0, y: 24, scale: 0.8 }, show: { opacity: 1, y: 0, scale: 1 } }}
+    className="bg-white rounded-2xl p-4 flex flex-col items-center gap-1 shadow-md"
+  >
     <Icon className="w-7 h-7" style={{ color }} />
     <span className="font-display font-bold text-2xl text-slate-800">{value}</span>
     <span className="text-xs font-bold text-slate-400 uppercase">{label}</span>
-  </div>
+  </motion.div>
 );
