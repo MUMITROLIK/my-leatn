@@ -8,8 +8,17 @@ import { ChoiceQuestion } from "../components/exercises/ChoiceQuestion";
 import { FillBlank } from "../components/exercises/FillBlank";
 import { CodeArrange } from "../components/exercises/CodeArrange";
 import { Celebration } from "../components/Celebration";
-import { X, Heart, Check, HeartCrack } from "lucide-react";
+import { X, Heart, Check, HeartCrack, RotateCcw } from "lucide-react";
 import { Progress } from "../components/ui/progress";
+
+function shuffle(arr) {
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
 
 export default function Lesson() {
   const { trackId, lessonId } = useParams();
@@ -17,7 +26,21 @@ export default function Lesson() {
   const game = useGame();
   const found = useMemo(() => findLesson(trackId, lessonId), [trackId, lessonId]);
 
+  // Theory (linear, order matters for instruction)
   const [step, setStep] = useState(0);
+
+  // Practice (quiz) engine: a single mutable queue + pointer.
+  // Phase "main": every question once, shuffled, no immediate retry.
+  // Wrong answers are collected; once the main pass ends, if there were
+  // any mistakes we show a review intro, then cycle ONLY the missed
+  // questions (shuffled) — a wrong answer during review re-appends itself
+  // to the end of the queue, so it keeps coming back until answered
+  // correctly. The lesson only finishes once the queue is fully cleared.
+  const [phaseStage, setPhaseStage] = useState("main"); // main | reviewIntro | review
+  const [queue, setQueue] = useState(null); // array of question indices, lazily built below
+  const [qIndex, setQIndex] = useState(0);
+  const [mistakes, setMistakes] = useState([]);
+
   const [value, setValue] = useState(null);
   const [phase, setPhase] = useState("answering"); // answering | correct | wrong
   const [correctCount, setCorrectCount] = useState(0);
@@ -39,8 +62,18 @@ export default function Lesson() {
   const isTheory = lesson.type === "theory";
   const steps = isTheory ? lesson.cards : lesson.questions;
   const totalSteps = steps.length;
-  const current = steps[step];
-  const progressPct = Math.round((step / totalSteps) * 100);
+
+  // Lazily initialize the shuffled practice queue once per lesson.
+  if (!isTheory && queue === null) {
+    setQueue(shuffle(steps.map((_, i) => i)));
+  }
+
+  const current = isTheory ? steps[step] : queue ? steps[queue[qIndex]] : null;
+  const progressPct = isTheory
+    ? Math.round((step / totalSteps) * 100)
+    : queue
+    ? Math.round((qIndex / queue.length) * 100)
+    : 0;
 
   const checkCorrect = () => {
     if (lesson.type === "code") {
@@ -59,9 +92,6 @@ export default function Lesson() {
     } else {
       setPhase("wrong");
       game.loseHeart();
-      if (game.hearts - 1 <= 0) {
-        // will show fail after they hit continue
-      }
     }
   };
 
@@ -77,13 +107,45 @@ export default function Lesson() {
       setFailed(true);
       return;
     }
-    if (step + 1 >= totalSteps) {
-      finishLesson();
-    } else {
-      setStep((s) => s + 1);
-      setValue(null);
-      setPhase("answering");
+
+    const wasWrong = phase === "wrong";
+    const askedIndex = queue[qIndex];
+
+    if (phaseStage === "main") {
+      const nextMistakes = wasWrong ? [...mistakes, askedIndex] : mistakes;
+      if (wasWrong) setMistakes(nextMistakes);
+
+      if (qIndex + 1 >= queue.length) {
+        // main pass finished
+        if (nextMistakes.length > 0) {
+          setPhaseStage("reviewIntro");
+        } else {
+          finishLesson();
+          return;
+        }
+      } else {
+        setQIndex((i) => i + 1);
+      }
+    } else if (phaseStage === "review") {
+      if (wasWrong) {
+        // send it to the back of the line — keeps showing up until correct
+        setQueue((q) => [...q, askedIndex]);
+      }
+      if (qIndex + 1 >= queue.length) {
+        finishLesson();
+        return;
+      }
+      setQIndex((i) => i + 1);
     }
+
+    setValue(null);
+    setPhase("answering");
+  };
+
+  const startReview = () => {
+    setQueue(shuffle(mistakes));
+    setQIndex(0);
+    setPhaseStage("review");
   };
 
   const handleTheoryNext = () => {
@@ -148,8 +210,34 @@ export default function Lesson() {
     );
   }
 
-  const canCheck =
-    lesson.type === "code" ? (value && value.length > 0) : value != null;
+  if (phaseStage === "reviewIntro") {
+    return (
+      <div className="fixed inset-0 z-50 flex flex-col items-center justify-center p-6 bg-white dark:bg-slate-950">
+        <div className="bounce-in text-center max-w-sm">
+          <div className="w-20 h-20 rounded-3xl bg-[#FFC800]/20 flex items-center justify-center mx-auto mb-4">
+            <RotateCcw className="w-10 h-10 text-[#FFC800]" strokeWidth={2.5} />
+          </div>
+          <h1 className="font-display font-bold text-3xl text-slate-800 dark:text-white mb-2">
+            Повторим ошибки
+          </h1>
+          <p className="text-slate-500 dark:text-slate-400 font-medium mb-8">
+            {mistakes.length === 1
+              ? "Один вопрос не получился с первого раза. Пройдём его ещё раз — это нормально, так и запоминается."
+              : `${mistakes.length} вопроса(ов) не получились с первого раза. Пройдём их ещё раз, пока не ответишь правильно на все.`}
+          </p>
+          <button
+            data-testid="start-review-button"
+            onClick={startReview}
+            className="tactile w-full bg-[#58CC02] text-white font-display font-bold uppercase px-8 py-3.5 rounded-2xl border-b-4 border-[#46A302]"
+          >
+            Начать повторение
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  const canCheck = lesson.type === "code" ? value && value.length > 0 : value != null;
 
   return (
     <div className="min-h-screen flex flex-col bg-white dark:bg-slate-950 transition-colors">
@@ -171,11 +259,22 @@ export default function Lesson() {
         )}
       </div>
 
+      {phaseStage === "review" && (
+        <div className="max-w-3xl mx-auto w-full px-4 sm:px-6 -mt-1">
+          <span
+            data-testid="review-badge"
+            className="inline-flex items-center gap-1.5 text-xs font-display font-bold uppercase text-[#FFC800] bg-[#FFC800]/10 px-3 py-1 rounded-full"
+          >
+            <RotateCcw className="w-3.5 h-3.5" /> Повторение ошибок
+          </span>
+        </div>
+      )}
+
       {/* Content */}
       <div className="flex-1 max-w-3xl mx-auto w-full px-4 sm:px-6 py-6 overflow-hidden">
         <AnimatePresence mode="wait">
           <motion.div
-            key={`${lesson.id}-${step}`}
+            key={`${lesson.id}-${phaseStage}-${isTheory ? step : qIndex}`}
             initial={{ opacity: 0, x: 40 }}
             animate={{ opacity: 1, x: 0 }}
             exit={{ opacity: 0, x: -40 }}
@@ -230,7 +329,8 @@ export default function Lesson() {
               )}
               {phase === "wrong" && (
                 <span className="flex items-center gap-2 text-[#EA2B2B]">
-                  <X className="w-6 h-6" strokeWidth={3} /> Ошибка, попробуй ещё!
+                  <X className="w-6 h-6" strokeWidth={3} />
+                  {phaseStage === "review" ? "Снова неверно — вернётся ещё раз" : "Ошибка, попробуй ещё!"}
                 </span>
               )}
             </motion.div>
