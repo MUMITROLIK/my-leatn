@@ -1,55 +1,33 @@
-import { useEffect } from "react";
 import "@/App.css";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import axios from "axios";
-import { HOME } from "@/constants/testIds";
+import { GameProvider } from "@/context/GameContext";
+import { Sidebar } from "@/components/Sidebar";
+import Learn from "@/pages/Learn";
+import Lesson from "@/pages/Lesson";
+import Profile from "@/pages/Profile";
+import Achievements from "@/pages/Achievements";
 
-const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
-const API = `${BACKEND_URL}/api`;
-
-const Home = () => {
-  const helloWorldApi = async () => {
-    try {
-      const response = await axios.get(`${API}/`);
-      console.log(response.data.message);
-    } catch (e) {
-      console.error(e, `errored out requesting / api`);
-    }
-  };
-
-  useEffect(() => {
-    helloWorldApi();
-  }, []);
-
+function Shell({ children }) {
   return (
-    <div>
-      <header className="App-header">
-        <a
-          data-testid={HOME.emergentLink}
-          className="App-link"
-          href="https://emergent.sh"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <img src="https://avatars.githubusercontent.com/in/1201222?s=120&u=2686cf91179bbafbc7a71bfbc43004cf9ae1acea&v=4" />
-        </a>
-        <p className="mt-5">Building something incredible ~!</p>
-      </header>
+    <div className="flex min-h-screen bg-background">
+      <Sidebar />
+      <main className="flex-1 min-w-0">{children}</main>
     </div>
   );
-};
+}
 
 function App() {
   return (
-    <div className="App">
+    <GameProvider>
       <BrowserRouter>
         <Routes>
-          <Route path="/" element={<Home />}>
-            <Route index element={<Home />} />
-          </Route>
+          <Route path="/" element={<Shell><Learn /></Shell>} />
+          <Route path="/achievements" element={<Shell><Achievements /></Shell>} />
+          <Route path="/profile" element={<Shell><Profile /></Shell>} />
+          <Route path="/lesson/:trackId/:lessonId" element={<Lesson />} />
         </Routes>
       </BrowserRouter>
-    </div>
+    </GameProvider>
   );
 }
 
