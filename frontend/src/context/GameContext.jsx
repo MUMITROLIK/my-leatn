@@ -41,6 +41,9 @@ export function GameProvider({ children }) {
   const syncedUidRef = useRef(null);
   const skipNextSaveRef = useRef(false);
   const saveTimerRef = useRef(null);
+  const pulledRef = useRef(false); // becomes true only after the initial cloud fetch for this uid resolves
+  const stateRef = useRef(state);
+  stateRef.current = state;
   const [cloudStatus, setCloudStatus] = useState("idle"); // idle | syncing | synced | error
 
   // Persist locally (cache, works offline)
@@ -48,26 +51,36 @@ export function GameProvider({ children }) {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
   }, [state]);
 
-  // When user logs in: pull cloud progress (cloud wins if it exists)
+  // When user logs in: pull cloud progress (cloud wins if it exists).
+  // If the cloud has nothing yet, seed it with whatever progress already exists locally.
   useEffect(() => {
     if (!firebaseEnabled || !user) return;
     if (syncedUidRef.current === user.uid) return;
     syncedUidRef.current = user.uid;
+    pulledRef.current = false;
     setCloudStatus("syncing");
     loadProgress(user.uid)
-      .then((cloud) => {
+      .then(async (cloud) => {
         if (cloud) {
           skipNextSaveRef.current = true;
           setState((s) => ({ ...defaultState, ...cloud }));
+        } else {
+          await saveProgress(user.uid, stateRef.current);
         }
         setCloudStatus("synced");
       })
-      .catch(() => setCloudStatus("error"));
+      .catch(() => setCloudStatus("error"))
+      .finally(() => {
+        pulledRef.current = true;
+      });
   }, [user, firebaseEnabled]);
 
   // Push to cloud on change (debounced), skip the echo right after pulling
   useEffect(() => {
     if (!firebaseEnabled || !user) return;
+    // Never push before the initial cloud fetch for this account has finished —
+    // otherwise the local (possibly empty) state can race ahead and overwrite real cloud data.
+    if (!pulledRef.current) return;
     if (skipNextSaveRef.current) {
       skipNextSaveRef.current = false;
       return;
