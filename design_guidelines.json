@@ -1,0 +1,126 @@
+{
+  "theme": "light",
+  "archetype": "Vibrant Play (Archetype 6) with Neo-brutalist tactile elements",
+  "typography": {
+    "headings": {
+      "fontFamily": "Fredoka, sans-serif",
+      "weights": ["600", "700"],
+      "usage": "Use for all main headers, lesson titles, and gamified celebration text."
+    },
+    "body": {
+      "fontFamily": "Nunito, sans-serif",
+      "weights": ["400", "500", "700"],
+      "usage": "Use for all lesson content, descriptions, and UI labels."
+    },
+    "code": {
+      "fontFamily": "JetBrains Mono, monospace",
+      "weights": ["400", "600"],
+      "usage": "Use for all code-checking exercises and programming theory cards."
+    }
+  },
+  "colors": {
+    "background": {
+      "main": "bg-slate-50",
+      "surface": "bg-white",
+      "lesson_active": "bg-blue-50/50"
+    },
+    "text": {
+      "primary": "text-slate-900",
+      "secondary": "text-slate-500",
+      "inverse": "text-white"
+    },
+    "borders": {
+      "default": "border-slate-200",
+      "heavy": "border-slate-300"
+    },
+    "gamification": {
+      "primary_action": "bg-green-500 hover:bg-green-400 text-white border-green-600",
+      "correct": "bg-[#58CC02] text-white",
+      "correct_surface": "bg-[#D7FFB8] border-[#58CC02] text-[#58CC02]",
+      "incorrect": "bg-[#FF4B4B] text-white",
+      "incorrect_surface": "bg-[#FFDFE0] border-[#FF4B4B] text-[#EA2B2B]",
+      "streak_flame": "text-[#FF9600]",
+      "heart_life": "text-[#FF4B4B]",
+      "gem_reward": "text-[#1CB0F6]",
+      "xp_gold": "text-[#FFC800]",
+      "locked_node": "bg-slate-200 border-slate-300 text-slate-400"
+    },
+    "tracks": {
+      "programming": "bg-emerald-500 border-emerald-600",
+      "design": "bg-pink-500 border-pink-600",
+      "english": "bg-indigo-500 border-indigo-600"
+    }
+  },
+  "spacing_and_layout": {
+    "global_padding": "p-4 sm:p-6 md:p-8",
+    "lesson_container": "max-w-3xl mx-auto w-full",
+    "tactile_button": "relative transform transition-all active:translate-y-1 active:border-b-0",
+    "button_depth": "border-b-[4px] sm:border-b-[6px]",
+    "card_radius": "rounded-2xl",
+    "button_radius": "rounded-xl"
+  },
+  "components": {
+    "HUD_Header": {
+      "description": "Sticky top bar showing current track, streak flame, gems, and hearts.",
+      "layout": "flex justify-between items-center px-4 py-3 bg-white border-b-2 border-slate-200 sticky top-0 z-50",
+      "items": "flex gap-4 sm:gap-6 items-center font-bold"
+    },
+    "Skill_Tree_Node": {
+      "description": "Circular button on the learning path. Staggered layout using margin-left/right to create a winding snake path.",
+      "styles": "w-16 h-16 sm:w-20 sm:h-20 rounded-full flex items-center justify-center text-3xl border-b-[6px] active:border-b-0 active:translate-y-[6px] transition-all",
+      "active_state": "bg-[track_color] border-[track_color_dark] text-white shadow-xl shadow-[track_color]/20",
+      "locked_state": "bg-slate-200 border-slate-300 text-slate-400 opacity-80"
+    },
+    "Multiple_Choice_Card": {
+      "description": "Selectable answer card in quiz.",
+      "styles": "p-4 border-2 rounded-2xl cursor-pointer transition-all flex items-center gap-4 text-lg font-medium",
+      "default_state": "border-slate-200 bg-white hover:bg-slate-50 text-slate-700 border-b-4",
+      "selected_state": "border-blue-400 bg-blue-50 text-blue-500 border-b-4",
+      "correct_state": "border-[#58CC02] bg-[#D7FFB8] text-[#58CC02] border-b-4",
+      "incorrect_state": "border-[#FF4B4B] bg-[#FFDFE0] text-[#EA2B2B] border-b-4"
+    },
+    "Code_Block_Card": {
+      "description": "Draggable or clickable code fragments for 'arrange the code' exercises.",
+      "styles": "px-4 py-3 bg-slate-800 text-green-400 font-mono text-sm sm:text-base rounded-xl border-b-4 border-slate-900 cursor-pointer shadow-sm hover:translate-y-[-2px] transition-transform"
+    },
+    "Bottom_Action_Bar": {
+      "description": "Fixed footer in lessons containing the 'Check' or 'Continue' button.",
+      "styles": "fixed bottom-0 left-0 w-full p-4 sm:p-6 bg-white border-t-2 border-slate-200 flex items-center justify-between z-50",
+      "button": "w-full sm:w-auto min-w-[200px] py-3 text-lg font-bold uppercase tracking-wide text-center text-white bg-[#58CC02] border-b-[6px] border-[#58CC02]/80 rounded-xl hover:bg-[#46A302] active:border-b-0 active:translate-y-[6px]"
+    },
+    "Celebration_Screen": {
+      "description": "Full screen overlay when lesson is complete.",
+      "styles": "fixed inset-0 bg-yellow-400 flex flex-col items-center justify-center text-center z-[100] p-6",
+      "typography": "text-5xl font-black text-white drop-shadow-lg mb-8",
+      "stats_card": "bg-white p-6 rounded-2xl border-b-[6px] border-yellow-500 w-full max-w-sm flex flex-col gap-4 text-yellow-600 font-bold text-xl"
+    }
+  },
+  "motion_and_interactions": {
+    "buttons": "All primary actions must use the tactile border-b trick. They physically depress when clicked.",
+    "progress_bar": "Width transition must be smooth (transition-all duration-500 ease-out).",
+    "feedback_pop": "When a user selects an answer, the card should slightly scale up (scale-105) for 150ms.",
+    "celebration": "Use framer-motion or confetti to celebrate lesson completion."
+  },
+  "media_and_icons": {
+    "instructions": "Use lucide-react for UI icons (Heart, Flame, Gem, Star, Lock, Check, X). Icons in HUD must be filled/colored.",
+    "images": {
+      "trophy": "https://images.unsplash.com/photo-1642104744809-14b986179927?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NjA2MTJ8MHwxfHNlYXJjaHwxfHwzZCUyMHRyb3BoeSUyMGFjaGlldmVtZW50JTIwZ2FtaWZpY2F0aW9ufGVufDB8fHx8MTc4Mjg1MTE1Nnww&ixlib=rb-4.1.0&q=85",
+      "heart": "https://images.unsplash.com/photo-1723394834136-06f19ecb9944?crop=entropy&cs=srgb&fm=jpg&ixid=M3w3NDQ2NDF8MHwxfHNlYXJjaHwxfHwzZCUyMGhlYXJ0JTIwcmVkJTIwbGlmZSUyMGdhbWlmaWNhdGlvbnxlbnwwfHx8fDE3ODI4NTExNTZ8MA&ixlib=rb-4.1.0&q=85",
+      "diamond": "https://images.unsplash.com/photo-1653405507161-da7d205d86f4?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NjAzMjh8MHwxfHNlYXJjaHwzfHwzZCUyMGRpYW1vbmQlMjBnZW0lMjByZXdhcmR8ZW58MHx8fHwxNzgyODUxMTU2fDA&ixlib=rb-4.1.0&q=85",
+      "code_abstract": "https://images.unsplash.com/photo-1742072594013-c87f855e29ca?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NTYxNzV8MHwxfHNlYXJjaHw0fHxwcm9ncmFtbWluZyUyMGNvZGUlMjBhYnN0cmFjdCUyMDNkfGVufDB8fHx8MTc4Mjg1MTE1Nnww&ixlib=rb-4.1.0&q=85"
+    }
+  },
+  "testing": {
+    "attributes": "All interactive elements (answers, continue buttons, track switches) MUST have data-testid attributes (e.g., data-testid='answer-choice-1', data-testid='check-answer-button', data-testid='lesson-node-2')."
+  },
+  "instructions_to_main_agent": [
+    "Install Google Fonts 'Fredoka' and 'Nunito' via index.css import or link tags.",
+    "Do NOT use standard flat buttons. Implement the 'tactile button' CSS trick using tailwind classes (border-b-[length] + active:translate-y-[length] + active:border-b-0) to create a physically pressable feel. Apply this to lesson nodes and check buttons.",
+    "For the lesson path (tree), use absolute positioning or flex layouts with offset margins to create a winding trail.",
+    "Build the multiple choice quiz component to have visual states for default, selected, correct (green), and incorrect (red).",
+    "Build a code-block arrangement exercise where code segments look like dark-mode tactile cards.",
+    "Include a sticky gamification header showing Hearts, Gems, and Streak Flame across all main screens.",
+    "Do NOT add authentication. Assume a single local user profile.",
+    "Always apply 'data-testid' to interactive elements."
+  ]
+}
