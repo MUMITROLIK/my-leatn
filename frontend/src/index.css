@@ -9,7 +9,6 @@ body {
     font-family: 'Nunito', sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-    background-color: #f8fafc;
 }
 
 code, .font-mono {
@@ -38,6 +37,27 @@ code, .font-mono {
         --input: 214 32% 91%;
         --ring: 96 96% 40%;
         --radius: 0.75rem;
+    }
+    .dark {
+        --background: 222 47% 7%;
+        --foreground: 210 40% 96%;
+        --card: 222 40% 11%;
+        --card-foreground: 210 40% 96%;
+        --popover: 222 40% 11%;
+        --popover-foreground: 210 40% 96%;
+        --primary: 96 80% 45%;
+        --primary-foreground: 222 47% 7%;
+        --secondary: 217 33% 17%;
+        --secondary-foreground: 210 40% 96%;
+        --muted: 217 33% 17%;
+        --muted-foreground: 215 20% 65%;
+        --accent: 199 89% 48%;
+        --accent-foreground: 222 47% 7%;
+        --destructive: 0 72% 51%;
+        --destructive-foreground: 210 40% 98%;
+        --border: 217 33% 20%;
+        --input: 217 33% 20%;
+        --ring: 96 80% 45%;
     }
 }
 

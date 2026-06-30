@@ -6,7 +6,7 @@ export const ChoiceQuestion = ({ question, value, onChange, phase }) => {
   const revealed = phase !== "answering";
   return (
     <div className="space-y-6">
-      <h2 className="font-display font-bold text-2xl sm:text-3xl text-slate-800">
+      <h2 className="font-display font-bold text-2xl sm:text-3xl text-slate-800 dark:text-white">
         {question.prompt}
       </h2>
       <div className="grid gap-3">
@@ -14,13 +14,13 @@ export const ChoiceQuestion = ({ question, value, onChange, phase }) => {
           const selected = value === i;
           const isAnswer = question.answer === i;
           let cls =
-            "border-slate-200 bg-white hover:bg-slate-50 text-slate-700";
+            "border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-200";
           if (revealed) {
             if (isAnswer) cls = "border-[#58CC02] bg-[#D7FFB8] text-[#58A700]";
             else if (selected) cls = "border-[#FF4B4B] bg-[#FFDFE0] text-[#EA2B2B]";
-            else cls = "border-slate-200 bg-white text-slate-400";
+            else cls = "border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-400 dark:text-slate-600";
           } else if (selected) {
-            cls = "border-[#1CB0F6] bg-[#DDF4FF] text-[#1899D6]";
+            cls = "border-[#1CB0F6] bg-[#DDF4FF] dark:bg-[#1CB0F6]/15 text-[#1899D6] dark:text-[#1CB0F6]";
           }
           return (
             <motion.button
@@ -43,7 +43,7 @@ export const ChoiceQuestion = ({ question, value, onChange, phase }) => {
                     ? "border-[#FF4B4B] bg-[#FF4B4B] text-white"
                     : selected
                     ? "border-[#1CB0F6] text-[#1CB0F6]"
-                    : "border-slate-300 text-slate-400"
+                    : "border-slate-300 dark:border-slate-600 text-slate-400 dark:text-slate-500"
                 }`}
               >
                 {revealed && isAnswer ? (

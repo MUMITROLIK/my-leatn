@@ -23,10 +23,10 @@ export default function Learn() {
 
       {/* Track selector */}
       <div className="max-w-5xl mx-auto px-4 sm:px-6 pt-6">
-        <h1 className="font-display font-bold text-3xl sm:text-4xl text-slate-800 mb-1">
+        <h1 className="font-display font-bold text-3xl sm:text-4xl text-slate-800 dark:text-white mb-1">
           Твой путь
         </h1>
-        <p className="text-slate-500 font-medium mb-5">Выбери направление и начинай учиться.</p>
+        <p className="text-slate-500 dark:text-slate-400 font-medium mb-5">Выбери направление и начинай учиться.</p>
 
         <div className="flex gap-3 overflow-x-auto pb-2 -mx-1 px-1">
           {Object.values(TRACKS).map((t) => {
@@ -42,7 +42,7 @@ export default function Learn() {
                 animate={active ? { y: [0, -3, 0] } : {}}
                 transition={{ duration: 0.3 }}
                 className={`shrink-0 flex items-center gap-2 px-4 py-2.5 rounded-2xl font-display font-semibold border-2 ${
-                  active ? "text-white border-b-4" : "bg-white text-slate-600 border-slate-200 border-b-4"
+                  active ? "text-white border-b-4" : "bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-300 border-slate-200 dark:border-slate-700 border-b-4"
                 }`}
                 style={active ? { backgroundColor: t.color, borderColor: t.colorDark } : {}}
               >
@@ -69,28 +69,28 @@ export default function Learn() {
         >
           <motion.div
             variants={{ hidden: { opacity: 0, y: 20 }, show: { opacity: 1, y: 0 } }}
-            className="bg-white rounded-2xl border-2 border-slate-200 border-b-4 p-5"
+            className="bg-white dark:bg-slate-900 rounded-2xl border-2 border-slate-200 dark:border-slate-800 border-b-4 p-5"
           >
             <div className="flex items-center justify-between mb-3">
-              <h3 className="font-display font-bold text-lg text-slate-800">Прогресс курса</h3>
+              <h3 className="font-display font-bold text-lg text-slate-800 dark:text-white">Прогресс курса</h3>
               <Trophy className="w-5 h-5 text-[#FFC800]" />
             </div>
             <Progress value={trackProgress} className="h-3 mb-2" data-testid="track-progress" />
-            <p className="text-sm font-bold text-slate-500">
+            <p className="text-sm font-bold text-slate-500 dark:text-slate-400">
               {completedCount} / {flat.length} уроков · {trackProgress}%
             </p>
           </motion.div>
 
           <motion.div
             variants={{ hidden: { opacity: 0, y: 20 }, show: { opacity: 1, y: 0 } }}
-            className="bg-white rounded-2xl border-2 border-slate-200 border-b-4 p-5"
+            className="bg-white dark:bg-slate-900 rounded-2xl border-2 border-slate-200 dark:border-slate-800 border-b-4 p-5"
           >
             <div className="flex items-center justify-between mb-3">
-              <h3 className="font-display font-bold text-lg text-slate-800">Цель на день</h3>
+              <h3 className="font-display font-bold text-lg text-slate-800 dark:text-white">Цель на день</h3>
               <Target className="w-5 h-5 text-[#1CB0F6]" />
             </div>
             <Progress value={goalPct} className="h-3 mb-2" data-testid="daily-goal-progress" />
-            <p className="text-sm font-bold text-slate-500">
+            <p className="text-sm font-bold text-slate-500 dark:text-slate-400">
               {xpToday} / {dailyGoal} XP сегодня
             </p>
           </motion.div>

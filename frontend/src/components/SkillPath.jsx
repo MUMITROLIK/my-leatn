@@ -13,7 +13,7 @@ const typeIcon = {
 };
 
 // Winding horizontal offset pattern (Duolingo-style snake path)
-const offsets = [0, 60, 90, 60, 0, -60, -90, -60];
+const offsets = [0, 50, 75, 50, 0, -50, -75, -50];
 
 export const SkillPath = ({ trackId, units }) => {
   const navigate = useNavigate();
@@ -100,17 +100,21 @@ export const SkillPath = ({ trackId, units }) => {
                     whileHover={!disabled ? { scale: 1.08 } : {}}
                     whileTap={!disabled ? { scale: 0.92, y: 4 } : {}}
                     onClick={() => navigate(`/lesson/${trackId}/${lesson.id}`)}
-                    className={`relative z-10 w-[68px] h-[68px] rounded-full flex items-center justify-center shadow-lg ${
+                    className={`relative z-10 w-16 h-16 sm:w-[68px] sm:h-[68px] rounded-full flex items-center justify-center shadow-lg ${
                       disabled ? "cursor-not-allowed" : "cursor-pointer"
-                    }`}
-                    style={{
-                      backgroundColor: unlocked ? (done ? track.colorDark : track.color) : "#e2e8f0",
-                      borderBottom: `6px solid ${unlocked ? track.colorDark : "#cbd5e1"}`,
-                    }}
+                    } ${!unlocked ? "bg-slate-200 dark:bg-slate-700 border-b-[6px] border-slate-300 dark:border-slate-800" : ""}`}
+                    style={
+                      unlocked
+                        ? {
+                            backgroundColor: done ? track.colorDark : track.color,
+                            borderBottom: `6px solid ${track.colorDark}`,
+                          }
+                        : {}
+                    }
                     title={lesson.title}
                   >
                     {!unlocked ? (
-                      <Lock className="w-7 h-7 text-slate-400" />
+                      <Lock className="w-7 h-7 text-slate-400 dark:text-slate-500" />
                     ) : done ? (
                       <motion.span
                         initial={{ scale: 0, rotate: -90 }}
@@ -125,7 +129,7 @@ export const SkillPath = ({ trackId, units }) => {
                   </motion.button>
                   <span
                     className={`mt-2 text-xs font-bold text-center max-w-[120px] ${
-                      unlocked ? "text-slate-600" : "text-slate-400"
+                      unlocked ? "text-slate-600 dark:text-slate-300" : "text-slate-400 dark:text-slate-600"
                     }`}
                   >
                     {lesson.title}

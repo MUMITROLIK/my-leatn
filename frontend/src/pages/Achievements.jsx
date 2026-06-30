@@ -28,8 +28,8 @@ export default function Achievements() {
     <div className="min-h-screen pb-24 md:pb-8">
       <Hud />
       <div className="max-w-3xl mx-auto px-4 sm:px-6 pt-8">
-        <h1 className="font-display font-bold text-3xl sm:text-4xl text-slate-800 mb-1">Достижения</h1>
-        <p className="text-slate-500 font-medium mb-6">Открывай награды, выполняя цели.</p>
+        <h1 className="font-display font-bold text-3xl sm:text-4xl text-slate-800 dark:text-white mb-1">Достижения</h1>
+        <p className="text-slate-500 dark:text-slate-400 font-medium mb-6">Открывай награды, выполняя цели.</p>
 
         <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 mb-10">
           {ACHIEVEMENTS.map((a) => {
@@ -39,7 +39,7 @@ export default function Achievements() {
                 key={a.id}
                 data-testid={`achievement-${a.id}`}
                 className={`rounded-2xl border-2 border-b-4 p-4 flex flex-col items-center text-center gap-2 ${
-                  unlocked ? "bg-white border-slate-200" : "bg-slate-50 border-slate-200 opacity-70"
+                  unlocked ? "bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800" : "bg-slate-50 dark:bg-slate-900/50 border-slate-200 dark:border-slate-800 opacity-70"
                 }`}
               >
                 <div
@@ -52,8 +52,8 @@ export default function Achievements() {
                     <Lock className="w-6 h-6 text-white" />
                   )}
                 </div>
-                <span className="font-display font-bold text-slate-800 text-sm">{a.title}</span>
-                <span className="text-xs font-bold text-slate-400">{a.desc}</span>
+                <span className="font-display font-bold text-slate-800 dark:text-white text-sm">{a.title}</span>
+                <span className="text-xs font-bold text-slate-400 dark:text-slate-500">{a.desc}</span>
               </div>
             );
           })}
@@ -62,18 +62,18 @@ export default function Achievements() {
         {/* Leaderboard */}
         <div className="flex items-center gap-2 mb-3">
           <Target className="w-6 h-6 text-[#1CB0F6]" />
-          <h2 className="font-display font-bold text-xl text-slate-800">Таблица лидеров</h2>
+          <h2 className="font-display font-bold text-xl text-slate-800 dark:text-white">Таблица лидеров</h2>
         </div>
-        <div className="bg-white rounded-2xl border-2 border-slate-200 border-b-4 overflow-hidden">
+        <div className="bg-white dark:bg-slate-900 rounded-2xl border-2 border-slate-200 dark:border-slate-800 border-b-4 overflow-hidden">
           {board.map((u, i) => (
             <div
               key={u.name}
               data-testid={`leaderboard-row-${i}`}
               className={`flex items-center gap-4 px-4 py-3 ${
-                u.you ? "bg-emerald-50" : ""
-              } ${i !== board.length - 1 ? "border-b border-slate-100" : ""}`}
+                u.you ? "bg-emerald-50 dark:bg-emerald-500/15" : ""
+              } ${i !== board.length - 1 ? "border-b border-slate-100 dark:border-slate-800" : ""}`}
             >
-              <span className={`font-display font-bold w-6 text-center ${i < 3 ? "text-[#FFC800]" : "text-slate-400"}`}>
+              <span className={`font-display font-bold w-6 text-center ${i < 3 ? "text-[#FFC800]" : "text-slate-400 dark:text-slate-500"}`}>
                 {i + 1}
               </span>
               <span
@@ -82,10 +82,10 @@ export default function Achievements() {
               >
                 {u.name.slice(0, 1)}
               </span>
-              <span className={`flex-1 font-bold ${u.you ? "text-emerald-600" : "text-slate-700"}`}>
+              <span className={`flex-1 font-bold ${u.you ? "text-emerald-600 dark:text-emerald-400" : "text-slate-700 dark:text-slate-200"}`}>
                 {u.name}
               </span>
-              <span className="font-display font-bold text-slate-500">{u.xp} XP</span>
+              <span className="font-display font-bold text-slate-500 dark:text-slate-400">{u.xp} XP</span>
             </div>
           ))}
         </div>

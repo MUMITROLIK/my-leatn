@@ -7,7 +7,7 @@ export const FillBlank = ({ question, value, onChange, phase }) => {
 
   return (
     <div className="space-y-8">
-      <h2 className="font-display font-bold text-2xl sm:text-3xl text-slate-800">
+      <h2 className="font-display font-bold text-2xl sm:text-3xl text-slate-800 dark:text-white">
         {question.prompt}
       </h2>
 
@@ -27,12 +27,12 @@ export const FillBlank = ({ question, value, onChange, phase }) => {
         {question.options.map((opt, i) => {
           const selected = value === i;
           const isAnswer = question.answer === i;
-          let cls = "bg-white border-slate-200 text-slate-700 hover:bg-slate-50";
+          let cls = "bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800";
           if (revealed) {
             if (isAnswer) cls = "bg-[#D7FFB8] border-[#58CC02] text-[#58A700]";
             else if (selected) cls = "bg-[#FFDFE0] border-[#FF4B4B] text-[#EA2B2B]";
           } else if (selected) {
-            cls = "bg-[#DDF4FF] border-[#1CB0F6] text-[#1899D6]";
+            cls = "bg-[#DDF4FF] dark:bg-[#1CB0F6]/15 border-[#1CB0F6] text-[#1899D6] dark:text-[#1CB0F6]";
           }
           return (
             <button

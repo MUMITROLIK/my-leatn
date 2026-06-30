@@ -12,7 +12,7 @@ export const CodeArrange = ({ question, value, onChange, phase }) => {
 
   return (
     <div className="space-y-8">
-      <h2 className="font-display font-bold text-2xl sm:text-3xl text-slate-800">
+      <h2 className="font-display font-bold text-2xl sm:text-3xl text-slate-800 dark:text-white">
         {question.prompt}
       </h2>
 
@@ -42,7 +42,7 @@ export const CodeArrange = ({ question, value, onChange, phase }) => {
             key={i}
             data-testid={`code-bank-block-${i}`}
             onClick={() => add(i)}
-            className="tactile px-3 py-2 bg-white text-slate-700 font-mono text-sm rounded-lg border-2 border-b-4 border-slate-200 hover:bg-slate-50"
+            className="tactile px-3 py-2 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 font-mono text-sm rounded-lg border-2 border-b-4 border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700"
           >
             {b}
           </button>

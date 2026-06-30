@@ -17,6 +17,7 @@ const defaultState = {
   xpToday: 0,
   xpTodayDate: todayStr(),
   heartsRefilledAt: null,
+  theme: "light",
 };
 
 const GameContext = createContext(null);
@@ -39,6 +40,17 @@ export function GameProvider({ children }) {
   useEffect(() => {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
   }, [state]);
+
+  // Apply theme class to <html>
+  useEffect(() => {
+    const root = document.documentElement;
+    if (state.theme === "dark") root.classList.add("dark");
+    else root.classList.remove("dark");
+  }, [state.theme]);
+
+  const toggleTheme = useCallback(() => {
+    setState((s) => ({ ...s, theme: s.theme === "dark" ? "light" : "dark" }));
+  }, []);
 
   // Daily reset for xpToday & hearts regen on new day
   useEffect(() => {
@@ -104,6 +116,7 @@ export function GameProvider({ children }) {
     xpIntoLevel,
     isCompleted: (id) => !!state.completed[id],
     setActiveTrack,
+    toggleTheme,
     loseHeart,
     refillHearts,
     completeLesson,

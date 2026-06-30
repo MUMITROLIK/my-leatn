@@ -35,6 +35,7 @@ export default function Lesson() {
 
   const { lesson } = found;
   const track = TRACKS[trackId];
+  const isDark = game.theme === "dark";
   const isTheory = lesson.type === "theory";
   const steps = isTheory ? lesson.cards : lesson.questions;
   const totalSteps = steps.length;
@@ -109,13 +110,13 @@ export default function Lesson() {
 
   if (failed) {
     return (
-      <div className="fixed inset-0 z-50 flex flex-col items-center justify-center p-6 bg-white">
+      <div className="fixed inset-0 z-50 flex flex-col items-center justify-center p-6 bg-white dark:bg-slate-950">
         <div className="bounce-in text-center max-w-sm">
           <HeartCrack className="w-20 h-20 text-[#FF4B4B] mx-auto mb-4" />
-          <h1 className="font-display font-bold text-4xl text-slate-800 mb-2">
+          <h1 className="font-display font-bold text-4xl text-slate-800 dark:text-white mb-2">
             Сердечки закончились
           </h1>
-          <p className="text-slate-500 font-medium mb-8">
+          <p className="text-slate-500 dark:text-slate-400 font-medium mb-8">
             Сердца восстановятся завтра, или потрать 30 гемов, чтобы пополнить их.
           </p>
           <div className="flex flex-col gap-3">
@@ -137,7 +138,7 @@ export default function Lesson() {
             <button
               data-testid="quit-to-home-button"
               onClick={() => navigate("/")}
-              className="tactile bg-white text-slate-500 font-display font-bold uppercase px-8 py-3.5 rounded-2xl border-2 border-b-4 border-slate-200"
+              className="tactile bg-white dark:bg-slate-900 text-slate-500 dark:text-slate-300 font-display font-bold uppercase px-8 py-3.5 rounded-2xl border-2 border-b-4 border-slate-200 dark:border-slate-700"
             >
               На главную
             </button>
@@ -151,13 +152,13 @@ export default function Lesson() {
     lesson.type === "code" ? (value && value.length > 0) : value != null;
 
   return (
-    <div className="min-h-screen flex flex-col bg-white">
+    <div className="min-h-screen flex flex-col bg-white dark:bg-slate-950 transition-colors">
       {/* Top bar */}
-      <div className="sticky top-0 bg-white z-30 px-4 sm:px-6 py-4 flex items-center gap-4 max-w-3xl mx-auto w-full">
+      <div className="sticky top-0 bg-white dark:bg-slate-950 z-30 px-4 sm:px-6 py-4 flex items-center gap-4 max-w-3xl mx-auto w-full transition-colors">
         <button
           data-testid="lesson-close-button"
           onClick={() => navigate("/")}
-          className="text-slate-400 hover:text-slate-600"
+          className="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200"
         >
           <X className="w-7 h-7" strokeWidth={2.5} />
         </button>
@@ -198,7 +199,11 @@ export default function Lesson() {
       <motion.div
         animate={{
           backgroundColor:
-            phase === "correct" ? "#D7FFB8" : phase === "wrong" ? "#FFDFE0" : "#ffffff",
+            phase === "correct"
+              ? (isDark ? "#1a3a0a" : "#D7FFB8")
+              : phase === "wrong"
+              ? (isDark ? "#3a1212" : "#FFDFE0")
+              : (isDark ? "#020617" : "#ffffff"),
         }}
         transition={{ duration: 0.2 }}
         className={`sticky bottom-0 border-t-2 z-30 ${
@@ -206,7 +211,7 @@ export default function Lesson() {
             ? "border-[#58CC02]"
             : phase === "wrong"
             ? "border-[#FF4B4B]"
-            : "border-slate-200"
+            : "border-slate-200 dark:border-slate-800"
         }`}
       >
         <div className="max-w-3xl mx-auto w-full px-4 sm:px-6 py-4 flex items-center justify-between gap-4">
