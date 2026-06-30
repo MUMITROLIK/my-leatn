@@ -4,10 +4,10 @@ import { useGame } from "../context/GameContext";
 import { TRACKS, getCourse, getAllLessonsFlat } from "../data/courses";
 import { SkillPath } from "../components/SkillPath";
 import { Hud } from "../components/Hud";
-import { Code2, Palette, Languages, Target, Trophy, Flame } from "lucide-react";
+import { Terminal, Languages, Target, Trophy, Flame } from "lucide-react";
 import { Progress } from "../components/ui/progress";
 
-const iconMap = { Code2, Palette, Languages };
+const iconMap = { Terminal, Languages };
 
 export default function Learn() {
   const { activeTrack, setActiveTrack, isCompleted, dailyGoal, xpToday, streak, level, xpIntoLevel } = useGame();

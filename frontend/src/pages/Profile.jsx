@@ -1,14 +1,26 @@
 import React from "react";
+import { useNavigate } from "react-router-dom";
 import { useGame } from "../context/GameContext";
+import { useAuth } from "@/context/AuthContext";
 import { Hud } from "../components/Hud";
 import { TRACKS, getAllLessonsFlat } from "../data/courses";
-import { Zap, Flame, Gem, Trophy, RotateCcw, Crown } from "lucide-react";
+import { Zap, Flame, Gem, Trophy, RotateCcw, Crown, Cloud, CloudOff, LogIn, LogOut } from "lucide-react";
 import { Progress } from "../components/ui/progress";
+
+const cloudLabel = {
+  idle: { text: "Только локально", Icon: CloudOff, color: "text-slate-400" },
+  syncing: { text: "Синхронизация...", Icon: Cloud, color: "text-amber-500" },
+  synced: { text: "Сохранено в облаке", Icon: Cloud, color: "text-emerald-500" },
+  error: { text: "Ошибка синхронизации", Icon: CloudOff, color: "text-red-500" },
+};
 
 export default function Profile() {
   const game = useGame();
-  const { xp, gems, streak, level, xpIntoLevel, completed, resetProgress } = game;
+  const { xp, gems, streak, level, xpIntoLevel, completed, resetProgress, cloudStatus } = game;
+  const { user, logout, firebaseEnabled } = useAuth();
+  const navigate = useNavigate();
   const totalCompleted = Object.keys(completed).length;
+  const cloud = cloudLabel[cloudStatus] || cloudLabel.idle;
 
   const stats = [
     { icon: Zap, label: "Всего XP", value: xp, color: "#FFC800" },
@@ -34,6 +46,34 @@ export default function Profile() {
               <p className="text-xs font-bold text-slate-400 dark:text-slate-500 mt-1">{xpIntoLevel}/100 XP до уровня {level + 1}</p>
             </div>
           </div>
+        </div>
+
+        {/* Account / cloud sync */}
+        <div className="bg-white dark:bg-slate-900 rounded-2xl border-2 border-slate-200 dark:border-slate-800 border-b-4 p-4 mb-8 flex items-center justify-between gap-3 flex-wrap">
+          <div className="flex items-center gap-2">
+            <cloud.Icon className={`w-5 h-5 ${cloud.color}`} />
+            <div>
+              <p className={`text-sm font-bold ${cloud.color}`}>{cloud.text}</p>
+              {user && <p className="text-xs text-slate-400 dark:text-slate-500">{user.email}</p>}
+            </div>
+          </div>
+          {firebaseEnabled && (
+            user ? (
+              <button
+                onClick={() => logout()}
+                className="tactile flex items-center gap-2 text-sm font-display font-bold uppercase px-4 py-2 rounded-xl border-2 border-b-4 border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300"
+              >
+                <LogOut className="w-4 h-4" /> Выйти
+              </button>
+            ) : (
+              <button
+                onClick={() => navigate("/login")}
+                className="tactile flex items-center gap-2 text-sm font-display font-bold uppercase px-4 py-2 rounded-xl border-2 border-b-4 border-[#1CB0F6]/30 text-[#1CB0F6] bg-white dark:bg-slate-900"
+              >
+                <LogIn className="w-4 h-4" /> Войти / Синхронизировать
+              </button>
+            )
+          )}
         </div>
 
         {/* Stats */}

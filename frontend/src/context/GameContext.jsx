@@ -1,4 +1,6 @@
-import React, { createContext, useContext, useEffect, useState, useCallback } from "react";
+import React, { createContext, useContext, useEffect, useState, useCallback, useRef } from "react";
+import { useAuth } from "@/context/AuthContext";
+import { loadProgress, saveProgress } from "@/lib/firebase";
 
 const STORAGE_KEY = "codequest_state_v1";
 const MAX_HEARTS = 5;
@@ -12,7 +14,7 @@ const defaultState = {
   streak: 0,
   lastActive: null,
   completed: {}, // lessonId -> { score, date }
-  activeTrack: "programming",
+  activeTrack: "hacking",
   dailyGoal: 50,
   xpToday: 0,
   xpTodayDate: todayStr(),
@@ -35,11 +37,51 @@ function loadState() {
 
 export function GameProvider({ children }) {
   const [state, setState] = useState(loadState);
+  const { user, firebaseEnabled } = useAuth();
+  const syncedUidRef = useRef(null);
+  const skipNextSaveRef = useRef(false);
+  const saveTimerRef = useRef(null);
+  const [cloudStatus, setCloudStatus] = useState("idle"); // idle | syncing | synced | error
 
-  // Persist
+  // Persist locally (cache, works offline)
   useEffect(() => {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
   }, [state]);
+
+  // When user logs in: pull cloud progress (cloud wins if it exists)
+  useEffect(() => {
+    if (!firebaseEnabled || !user) return;
+    if (syncedUidRef.current === user.uid) return;
+    syncedUidRef.current = user.uid;
+    setCloudStatus("syncing");
+    loadProgress(user.uid)
+      .then((cloud) => {
+        if (cloud) {
+          skipNextSaveRef.current = true;
+          setState((s) => ({ ...defaultState, ...cloud }));
+        }
+        setCloudStatus("synced");
+      })
+      .catch(() => setCloudStatus("error"));
+  }, [user, firebaseEnabled]);
+
+  // Push to cloud on change (debounced), skip the echo right after pulling
+  useEffect(() => {
+    if (!firebaseEnabled || !user) return;
+    if (skipNextSaveRef.current) {
+      skipNextSaveRef.current = false;
+      return;
+    }
+    setCloudStatus("syncing");
+    if (saveTimerRef.current) clearTimeout(saveTimerRef.current);
+    saveTimerRef.current = setTimeout(() => {
+      saveProgress(user.uid, state)
+        .then(() => setCloudStatus("synced"))
+        .catch(() => setCloudStatus("error"));
+    }, 800);
+    return () => clearTimeout(saveTimerRef.current);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [state, user, firebaseEnabled]);
 
   // Apply theme class to <html>
   useEffect(() => {
@@ -114,6 +156,7 @@ export function GameProvider({ children }) {
     MAX_HEARTS,
     level,
     xpIntoLevel,
+    cloudStatus,
     isCompleted: (id) => !!state.completed[id],
     setActiveTrack,
     toggleTheme,
